@@ -170,7 +170,6 @@ int data_parser(int offset){
   printf("Y offset:%d\n",be2le(data->y_offset));
   printf("Device Width:%d\n",be2le(data->dev_width));
   int len = (be2le(data->width)*be2le(data->height)+7)/8;
-  //uint8_t *bmp = (uint8_t *)(data+sizeof(struct font_data));
   uint8_t *bmp = (uint8_t *)(buffer_base+offset+sizeof(struct font_data));
   printf("Bitmap Length:%d\n",len);
   uint8_t bmp_b = 0;
