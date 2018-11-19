@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <sys/stat.h>
+#include "font_bin.h"
 
 #define SECTION_FILE "FILE"
 #define SECTION_NAME "NAME"
@@ -17,8 +17,6 @@
 #define SECTION_DESC "DESC"
 #define SECTION_CHIX "CHIX"
 
-const char font_file[] = "unicode.pf2";
-char* buffer_base = 0;
 struct __attribute__((packed)) char_index {
   uint8_t unicode_point[4];
   uint8_t str_flag;
@@ -38,48 +36,17 @@ char* element_parser(char *buffer);
 int char_index_parser(char *buffer,int len);
 uint16_t be2le(uint16_t val);
 int data_parser(int offset);
-int file_size = 0;
+
+
+char *buffer = font_bin;
+char *buffer_base = font_bin;
 
 int main(int argc, char* argv[]){
-  struct stat st;
-  FILE *fp;
-  //Get file size to allocate buffer
-  if(stat(font_file,&st) != 0){
-    fprintf(stderr,"Failed to get file size of %s\n",font_file);
-    exit(EXIT_FAILURE);
-  }
-  file_size = st.st_size;
-  printf("file size:%d\n",file_size);
-
-  //Open file
-  if((fp = fopen(font_file,"rb")) == NULL){
-    fprintf(stderr,"Failed to open %s\n",font_file);
-    exit(EXIT_FAILURE);
-  }
-  
-  char* buffer = malloc(file_size);
-  buffer_base = buffer;
-  if(buffer == NULL){
-    fprintf(stderr,"Failed to allocate memory\n");
-    exit(EXIT_FAILURE);
-  }
-  for(int i=0;i<file_size;i++){
-    buffer[i] = (char)fgetc(fp);
-  }
-  printf("Successfully got file content\n");
-  fclose(fp);
-  for(int i=0;i<1000;){
-    printf("%02X ",buffer[i]);
-    i++;
-    if(i%9 == 0) printf("\n");
-  }
-
   section_parser(buffer);
 }
 
 int section_parser(char *buffer){
-  char* initial_buffer = buffer; 
-  while(buffer - initial_buffer < file_size){
+  while(buffer - buffer_base < font_size){
     if(!memcmp(buffer,SECTION_FILE,4)){
       printf("-----FILE SECTION-----\n");
     }else if(!memcmp(buffer,SECTION_NAME,4)){

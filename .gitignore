@@ -1,2 +1,5 @@
-unicode.pf2
+*.pf2
 *.o
+font
+font_builder
+font_bin.h
