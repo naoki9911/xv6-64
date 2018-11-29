@@ -11,6 +11,7 @@
 //#include  <Library/BaseMemoryLib.h>
 
 #include "file_loader.h"
+#include "relocate.h"
 
 EFI_STATUS
 EFIAPI
@@ -19,15 +20,10 @@ UefiMain (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
-  EFI_STATUS Status;
   CHAR16 *KernelFileName = L"\\kernel";
-  EFI_PHYSICAL_ADDRESS KernelBufferAddr;
-  UINTN KernelBufferPageSize;
-  Status = LoadFile(KernelFileName,&KernelBufferAddr,&KernelBufferPageSize);
-  if(EFI_ERROR(Status)){
-    Print(L"Failed to Load File: %s\n",KernelFileName);
-    return Status;
-  }
+  EFI_PHYSICAL_ADDRESS KernelBaseAddr;
+
+  RelocateELF(KernelFileName, &KernelBaseAddr);
 
 
   Print(L"Hello UEFI!\n");

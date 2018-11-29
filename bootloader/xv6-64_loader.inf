@@ -9,6 +9,7 @@
 [Sources]
   main.c
   file_loader.c
+  relocate.c
 
 [Packages]
   MdePkg/MdePkg.dec
