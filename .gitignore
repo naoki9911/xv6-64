@@ -1,5 +1,2 @@
-*.pf2
-*.o
-font
-font_builder
-font_bin.h
+ovmf
+image
