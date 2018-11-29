@@ -1,0 +1,6 @@
+*.pf2
+*.o
+*.d
+font
+font_builder
+font_bin.h
