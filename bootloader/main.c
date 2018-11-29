@@ -25,7 +25,9 @@ UefiMain (
 
   RelocateELF(KernelFileName, &KernelBaseAddr);
 
-
+  typedef unsigned long (EntryPoint)(void);
+  EntryPoint *Entry = (EntryPoint*)(KernelBaseAddr);
+  Entry();
   Print(L"Hello UEFI!\n");
   while(1){
     asm("hlt");
