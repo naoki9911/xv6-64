@@ -1,0 +1,6 @@
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = xv6-64_loader
+  PACKAGE_GUID                   = a3b2f829-f9c4-4261-b8e2-69ff6fbd1b46
+  PACKAGE_VERSION                = 0.1
+
