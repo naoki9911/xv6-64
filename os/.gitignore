@@ -1,6 +1,7 @@
 *.pf2
 *.o
 *.d
+kernel
 font
 font_builder
 font_bin.h
