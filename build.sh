@@ -3,9 +3,9 @@ if [ ! -e image/EFI/BOOT ]; then
   mkdir -p image/EFI/BOOT
 fi
 
-if [ -e bootloader/build ]; then
+#if [ -e bootloader/build ]; then
 #        rm -rf bootloader/build/*
-fi
+#fi
 
 cd edk2
 source edksetup.sh
