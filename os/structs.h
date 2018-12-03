@@ -1,21 +1,23 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
+#include "stdint.h"
+
 struct __attribute((packed)) GraphicConfig {
-  unsigned long long frame_base;
-  unsigned long long frame_size;
-  unsigned long long horizontal_resolution;
-  unsigned long long vertical_resolution;
-  unsigned long long pixels_per_scan_line;
+  uint64_t frame_base;
+  uint64_t frame_size;
+  uint64_t horizontal_resolution;
+  uint64_t vertical_resolution;
+  uint64_t pixels_per_scan_line;
 };
 
 struct __attribute__((packed)) BootParam {
-  unsigned long long kernel_entry;
-  unsigned long long madt_addr;
+  uint64_t kernel_entry;
+  uint64_t madt_addr;
   struct GraphicConfig graphic_config;
 //  struct gdt bootstrap_gdt[3];
 //  struct gdt_desc bootstrap_gdt_desc;
-  unsigned long long kernel_addr;
+  uint64_t kernel_addr;
 };
 
 #endif
