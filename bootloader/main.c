@@ -22,6 +22,7 @@ UefiMain (
   IN EFI_SYSTEM_TABLE *SystemTable
   )
 {
+  EFI_STATUS Status;
   CHAR16 *KernelFileName = L"\\kernel";
   EFI_PHYSICAL_ADDRESS KernelBaseAddr;
 
@@ -33,9 +34,28 @@ UefiMain (
 
   typedef unsigned long (EntryPoint)(struct BootParam*);
   EntryPoint *Entry = (EntryPoint*)(KernelBaseAddr);
-  Entry(&boot_param);
-  Print(L"Hello UEFI!\n");
-  while(1){
-    asm("hlt");
+
+  struct MemoryMap MemoryMap = {4096,NULL,4096,0,0,0};
+  Status = gBS->AllocatePool(EfiLoaderData, MemoryMap.BufferSize, &MemoryMap.Buffer);
+  if(EFI_ERROR(Status)){
+    Print(L"Failed to allocate memory to get memory map\n");
+    return Status;
   }
+
+  gBS->GetMemoryMap(
+      &MemoryMap.MapSize,
+      (EFI_MEMORY_DESCRIPTOR*)MemoryMap.Buffer,
+      &MemoryMap.MapKey,
+      &MemoryMap.DescriptorSize,
+      &MemoryMap.DescriptorVersion);
+
+  Status = gBS->ExitBootServices(ImageHandle, MemoryMap.MapKey);
+  if(EFI_ERROR(Status)){
+    Print(L"Failed to exit boot services\n");
+    return Status;
+  }
+
+  Entry(&boot_param);
+
+  return Status;
 }

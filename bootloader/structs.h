@@ -109,4 +109,13 @@ struct __attribute__((packed)) BootParam {
   UINT64 kernel_addr;
 };
 
+struct MemoryMap {
+  UINTN BufferSize;
+  VOID *Buffer;
+  UINTN MapSize;
+  UINTN MapKey;
+  UINTN DescriptorSize;
+  UINT32 DescriptorVersion;
+};
+
 #endif
