@@ -12,6 +12,8 @@
 
 #include "file_loader.h"
 #include "relocate.h"
+#include "graphic.h"
+#include "structs.h"
 
 EFI_STATUS
 EFIAPI
@@ -25,9 +27,13 @@ UefiMain (
 
   RelocateELF(KernelFileName, &KernelBaseAddr);
 
-  typedef unsigned long (EntryPoint)(void);
+
+  struct BootParam boot_param;
+  GetGraphicMode(ImageHandle,&(boot_param.graphic_config));
+
+  typedef unsigned long (EntryPoint)(struct BootParam*);
   EntryPoint *Entry = (EntryPoint*)(KernelBaseAddr);
-  Entry();
+  Entry(&boot_param);
   Print(L"Hello UEFI!\n");
   while(1){
     asm("hlt");

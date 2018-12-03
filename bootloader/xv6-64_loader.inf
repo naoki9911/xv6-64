@@ -10,6 +10,7 @@
   main.c
   file_loader.c
   relocate.c
+  graphic.c
 
 [Packages]
   MdePkg/MdePkg.dec
