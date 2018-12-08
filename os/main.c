@@ -1,12 +1,11 @@
 #include "structs.h"
 #include "stdint.h"
+#include "graphic.h"
+#include "font.h"
 int entry(struct BootParam *boot_param)
 {
-  uint8_t *vram = (unsigned char*)boot_param->graphic_config.frame_base;
-  uint64_t vram_size = boot_param->graphic_config.frame_size;
-  for(int i=0;i<vram_size;i++){
-    vram[i] = 0xFF;
-  }
+  graphic_init(&(boot_param->graphic_config));
+  section_parser();
   while(1){
     asm("hlt");
   }

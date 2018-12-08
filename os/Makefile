@@ -1,15 +1,16 @@
 CC = gcc
 LD = ld
-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m64 -Werror -fno-omit-frame-pointer
+CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m64 -Werror -fno-omit-frame-pointer -fno-stack-protector
 LDFLAGS = -m elf_x86_64
 FONT_NAME = font.pf2
 
 OBJS = \
-       font_builder.o\
        font.o\
+       graphic.o\
 
-kernel:main.o
-	$(LD) $(LDFLAGS) -T kernel.ld -o kernel main.o
+
+kernel:main.o $(OBJS) font_bin.h
+	$(LD) $(LDFLAGS) -T kernel.ld -o kernel main.o $(OBJS)
 
 font_builder: font_builder.c
 	$(CC) -o font_builder font_builder.c
