@@ -20,7 +20,7 @@ int section_parser(char *buffer);
 char* element_parser(char *buffer);
 int char_index_parser(char *buffer,int len);
 uint16_t be2le(uint16_t val);
-int data_parser(int offset);
+void font_data_file_creator();
 
 char *buffer;
 char *buffer_base;
@@ -59,12 +59,11 @@ int main(int argc, char* argv[]){
 
   for(int i=0;i<file_size-1;i++){
     char c = fgetc(fp);
-  //  printf("0x%02X, ",c);
     buffer[i] = c;
-  //  if((i+1)%10 == 0) printf("\n");
   }
-  //printf("0x%02X };\n",fgetc(fp));
   section_parser(buffer);
+
+  font_data_file_creator();
 
   return 0;
 }
@@ -86,6 +85,19 @@ struct __attribute__((packed)) font_data {
 
 
 
+struct font_entry {
+    uint8_t ascii_code;
+    int16_t width;
+    int16_t height;
+    int16_t x_offset;
+    int16_t y_offset;
+    int16_t dev_width;
+    uint16_t len;
+    uint8_t font_bin[10];
+};
+int data_parser(int offset, struct font_entry *entry);
+
+struct font_entry font_data[0x5F];
 
 
 int section_parser(char *buffer){
@@ -147,58 +159,89 @@ char* element_parser(char *buffer){
 }
 
 int char_index_parser(char *buffer,int len){
-  printf("struct size:%d\n",sizeof(struct char_index));
   int unicode_p=0;
   int i = 0;
   struct char_index *c_index;
-  while(unicode_p < 0x7E){
+  while(unicode_p < 0x7F){
     c_index = (struct char_index *)(buffer+i);
     for(int j=0;j<4;j++){
       unicode_p = (unicode_p << 8) + c_index->unicode_point[j];
     }
     printf("Unicode Point:%X\n",unicode_p);
     
-    printf("Storage flags:%02X\n",c_index->str_flag);
 
-    int offset=0;
-    for(int j=0;j<4;j++){
-      offset = (offset << 8) + c_index->offset[j];
+    if( unicode_p >= 0x20 && unicode_p <= 0x7E){
+        printf("Storage flags:%02X\n",c_index->str_flag);
+        int offset=0;
+        for(int j=0;j<4;j++){
+            offset = (offset << 8) + c_index->offset[j];
+        }
+        printf("Offset:%d\n",offset);
+        font_data[unicode_p-0x20].ascii_code = unicode_p&0xFF;
+        data_parser(offset, &font_data[unicode_p-0x20]);
+        printf("\n");
     }
-    printf("Offset:%d\n",offset);
-    data_parser(offset);
-    printf("\n");
     i+=sizeof(struct char_index);
   }
 }  
 
-int data_parser(int offset){
-  struct font_data *data = (struct font_data *)(offset+buffer_base);
-  int width = be2le(data->width);
-  int height = be2le(data->height);
-  printf("Width:%d\n",width);
-  printf("Height:%d\n",height);
-  printf("X offset:%d\n",be2le(data->x_offset));
-  printf("Y offset:%d\n",(int16_t)be2le(data->y_offset));
-  printf("Device Width:%d\n",be2le(data->dev_width));
-  int len = (be2le(data->width)*be2le(data->height)+7)/8;
-  uint8_t *bmp = (uint8_t *)(buffer_base+offset+sizeof(struct font_data));
-  printf("Bitmap Length:%d\n",len);
-  uint8_t bmp_b = 0;
-  for(int h=0;h<height;h++){
-    for(int w=0;w<width;w++){
-      if((w+h*width)%8 == 0){
-        bmp_b = bmp[(w+h*width)/8];
-      }
-      if(bmp_b >> (7-(w+h*width)%8)&0x1){
-        printf("*");
-      }else{
-        printf(" ");
-      }
+int data_parser(int offset, struct font_entry *entry){
+    struct font_data *data = (struct font_data *)(offset+buffer_base);
+    int width = be2le(data->width);
+    int height = be2le(data->height);
+    printf("Width:%d\n",width);
+    printf("Height:%d\n",height);
+    printf("X offset:%d\n",be2le(data->x_offset));
+    printf("Y offset:%d\n",(int16_t)be2le(data->y_offset));
+    printf("Device Width:%d\n",be2le(data->dev_width));
+    int len = (be2le(data->width)*be2le(data->height)+7)/8;
+    uint8_t *bmp = (uint8_t *)(buffer_base+offset+sizeof(struct font_data));
+    printf("Bitmap Length:%d\n",len);
+    if(len > 10) {
+        printf("Bitmap Length is larger than 10\n");
+        exit(1);
     }
-    printf("\n");
-  }
+    uint8_t bmp_b = 0;
+    for(int h=0;h<height;h++){
+        for(int w=0;w<width;w++){
+            if((w+h*width)%8 == 0){
+                bmp_b = bmp[(w+h*width)/8];
+            }
+            if(bmp_b >> (7-(w+h*width)%8)&0x1){
+                printf("*");
+            }else{
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    entry->width = width;
+    entry->height = height;
+    entry->x_offset = be2le(data->x_offset);
+    entry->y_offset = be2le(data->y_offset);
+    entry->dev_width = be2le(data->dev_width);
+    entry->len = len;
+    memset(entry->font_bin, 0, 10);
+    memcpy(entry->font_bin, bmp, len);
 }
 
+void font_data_file_creator(){
+    printf("struct font_entry font_data[0x5F] = \n");
+    for(int i=0;i<0x5F;i++){
+        struct font_entry *entry = &font_data[i];
+        printf("{ 0x%X, %d, %d, %d, %d, %d, %d",
+                entry->ascii_code, entry->width, entry->height, entry->x_offset, entry->y_offset, entry->dev_width, entry->len);
+        for(int j=0;j<10;j++){
+            printf(", 0x%02X", entry->font_bin[i]);
+        }
+        printf(" }");
+        if(i != 0x5E){
+            printf(",\n");
+        }else{
+            printf("};\n");
+        }
+    }
+}
 uint16_t be2le(uint16_t val){
-  return ((0xFF&val) << 8) + ((0xFF00&val) >> 8);
+    return ((0xFF&val) << 8) + ((0xFF00&val) >> 8);
 }
