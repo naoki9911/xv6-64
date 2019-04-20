@@ -6,9 +6,9 @@ int entry(struct BootParam *boot_param)
 {
   graphic_init(&(boot_param->graphic_config));
   console_init();
-  console_putc('l');
-  console_putc('o');
-  console_puts("Hello World!");
+  for(int i=0;i<10;i++){
+    console_puts("Hello World!\n");
+  }
   while(1){
     asm("hlt");
   }

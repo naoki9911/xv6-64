@@ -12,6 +12,6 @@ struct font_entry {
     uint8_t data[10];
 };
 
-struct font_entry* font_draw(int x, int y,uint8_t c);
+struct font_entry* font_draw(int base_x, int base_y,uint8_t c);
 
 #endif
