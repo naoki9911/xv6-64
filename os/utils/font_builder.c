@@ -196,12 +196,22 @@ int data_parser(int offset, struct font_entry *entry){
     printf("Device Width:%d\n",be2le(data->dev_width));
     int len = (be2le(data->width)*be2le(data->height)+7)/8;
     uint8_t *bmp = (uint8_t *)(buffer_base+offset+sizeof(struct font_data));
+    memset(entry->font_bin, 0, 10);
+    memcpy(entry->font_bin, bmp, len);
     printf("Bitmap Length:%d\n",len);
     if(len > 10) {
         printf("Bitmap Length is larger than 10\n");
         exit(1);
     }
     uint8_t bmp_b = 0;
+    for (int i=0;i<len;i++){
+        printf(" 0x%02X", bmp[i]);
+    }
+    printf("\n");
+    for (int i=0;i<len;i++){
+        printf(" 0x%02X", entry->font_bin[i]);
+    }
+    printf("\n");
     for(int h=0;h<height;h++){
         for(int w=0;w<width;w++){
             if((w+h*width)%8 == 0){
@@ -221,20 +231,19 @@ int data_parser(int offset, struct font_entry *entry){
     entry->y_offset = be2le(data->y_offset);
     entry->dev_width = be2le(data->dev_width);
     entry->len = len;
-    memset(entry->font_bin, 0, 10);
-    memcpy(entry->font_bin, bmp, len);
 }
 
 void font_data_file_creator(){
-    printf("struct font_entry font_data[0x5F] = \n");
+    printf("struct font_entry font_data[0x5F] = {\n");
     for(int i=0;i<0x5F;i++){
         struct font_entry *entry = &font_data[i];
         printf("{ 0x%X, %d, %d, %d, %d, %d, %d",
                 entry->ascii_code, entry->width, entry->height, entry->x_offset, entry->y_offset, entry->dev_width, entry->len);
-        for(int j=0;j<10;j++){
-            printf(", 0x%02X", entry->font_bin[i]);
+        printf(", { 0x%02X", entry->font_bin[0]);
+        for(int j=1;j<10;j++){
+            printf(", 0x%02X", entry->font_bin[j]);
         }
-        printf(" }");
+        printf(" }}");
         if(i != 0x5E){
             printf(",\n");
         }else{
