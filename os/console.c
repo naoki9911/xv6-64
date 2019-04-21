@@ -60,8 +60,8 @@ void console_puts_hex(int64_t val){
         hex = hex>>4;
         digit_num++;
     }while(hex!=0);
-    for(int i=digit_num;i>=0;i--){
-        console_putc(pattern[digit[i]]);
+    for(int i=digit_num;i>0;i--){
+        console_putc(pattern[digit[i-1]]);
     }
 }
 void console_putc(uint8_t c){
