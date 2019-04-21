@@ -1,5 +1,6 @@
 #include "stdint.h"
 #include "console.h"
+#include "graphic.h"
 #include "font.h"
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -9,7 +10,11 @@ uint16_t cursor_pos_y = 0;
 uint16_t cursor_x = 0;
 uint16_t cursor_y = 0;
 
-uint16_t max_height = 0x10;
+uint16_t cursor_x_max = 0;
+uint16_t cursor_y_max = 0;
+
+uint8_t max_height = 0x10;
+uint8_t max_width = 0x10; 
 
 const char* pattern = "0123456789ABCDEF";
 void console_init(){
@@ -17,6 +22,8 @@ void console_init(){
     cursor_pos_y = 0;
     cursor_x = 0;
     cursor_y = max_height;
+    cursor_x_max = graphic_get_horizontal_resolution();
+    cursor_y_max = graphic_get_vertical_resolution();
 }
 void console_puts_str(char *str){
     int i=0;
@@ -69,6 +76,10 @@ void console_putc(uint8_t c){
         cursor_y += max_height;
         cursor_x = 0;
     }else{
+        if(cursor_x + max_width > cursor_x_max){
+            cursor_x = 0;
+            cursor_y += max_height;
+        }
         struct font_entry *entry;
         entry = font_draw(cursor_x,cursor_y,c);
         cursor_x += entry->dev_width;

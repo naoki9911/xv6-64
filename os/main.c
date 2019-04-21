@@ -9,7 +9,7 @@ int entry(struct BootParam *boot_param)
   console_init();
   debug_info_graphic(&(boot_param->graphic_config));
   for(int i=0;i<10;i++){
-    console_puts_str("Hello World!\n");
+    console_puts_str("Hello World!");
   }
   while(1){
     asm("hlt");
