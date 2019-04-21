@@ -2,7 +2,8 @@
 #define CONSOLE_H
 
 void console_init();
-void console_puts(char *str);
+void console_puts_str(char *str);
+void console_puts_dec(int val);
 void console_putc(uint8_t c);
 
 #endif
