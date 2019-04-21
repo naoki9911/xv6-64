@@ -51,6 +51,7 @@ void debug_info_cpuid(){
 
     //EAX = 1
     cpuid_read(&cpuid, 1);
+    console_puts_str("[CPUID] CPU Features:");
     for(int i=0;i<29;i++){
         if(cpuid.ecx & (1 << i)){
             console_puts_str(cpuid_feat_ecx[i]);
