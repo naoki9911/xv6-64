@@ -8,6 +8,7 @@ OBJS = \
        graphic.o\
        console.o\
        debug.o\
+       asm.o\
 
 
 kernel:main.o $(OBJS)
