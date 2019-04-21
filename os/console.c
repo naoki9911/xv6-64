@@ -26,19 +26,40 @@ void console_puts_str(char *str){
     }
 }
 
-void console_puts_dec(int val){
+void console_puts_dec(int64_t val){
+    uint64_t dec = val;
     if(val < 0){
         console_putc('-');
-        val -= val*2;
+        dec = -1*val;
     }
     uint8_t digit[32];
-    int dec = val;
     int digit_num = 0;
     do{
         digit[digit_num] = dec%10;
         dec = dec/10;
         digit_num++;
     }while(dec!=0);
+    for(int i=digit_num;i>0;i--){
+        if(digit_num > 9){
+            console_puts_str("ERROR");
+        }
+        console_putc(pattern[digit[i-1]]);
+    }
+}
+
+void console_puts_hex(int64_t val){
+    if(val < 0){
+        console_putc('-');
+        val -= val*2;
+    }
+    uint8_t digit[32];
+    uint64_t hex = val;
+    int digit_num = 0;
+    do{
+        digit[digit_num] = hex&0xF;
+        hex = hex>>4;
+        digit_num++;
+    }while(hex!=0);
     for(int i=digit_num;i>=0;i--){
         console_putc(pattern[digit[i]]);
     }

@@ -7,6 +7,7 @@ OBJS = \
        font.o\
        graphic.o\
        console.o\
+       debug.o\
 
 
 kernel:main.o $(OBJS)
