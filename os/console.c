@@ -25,7 +25,7 @@ void console_init(){
     cursor_x_max = graphic_get_horizontal_resolution();
     cursor_y_max = graphic_get_vertical_resolution();
 }
-void console_puts_str(char *str){
+void console_puts_str(const char* str){
     int i=0;
     while(str[i]){
         console_putc(str[i]);
