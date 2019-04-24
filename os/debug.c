@@ -3,6 +3,7 @@
 #include "asm.h"
 
 #include "structs.h"
+#include "acpi.h"
 
 void debug_info_graphic(struct GraphicConfig *g_conf){
     console_puts_str("[Graphic] FrameBase:0x");
@@ -64,6 +65,7 @@ void debug_info_cpuid(){
             console_puts_str(" ");
         }
     }
+    console_puts_str("\n");
 }
 
 void debug_info_bootparam(struct BootParam *boot_param){
@@ -74,4 +76,11 @@ void debug_info_bootparam(struct BootParam *boot_param){
     console_puts_str("\n[Boot] RSDP Address:");
     console_puts_hex(boot_param->rsdp_addr);
     console_puts_str("\n");
+}
+
+void debug_info_rsdp(struct rsdp_desc *rsdp){
+    console_puts_str("[ACPI] RSDP Signature:");
+    console_puts_strn(rsdp->signature, 6);
+    console_puts_str("\n");
+
 }

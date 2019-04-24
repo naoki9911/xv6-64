@@ -33,6 +33,12 @@ void console_puts_str(const char* str){
     }
 }
 
+
+void console_puts_strn(const char* str, int len){
+    for(int i=0;i<len;i++){
+        console_putc(str[i]);
+    }
+}
 void console_puts_dec(int64_t val){
     uint64_t dec = val;
     if(val < 0){
