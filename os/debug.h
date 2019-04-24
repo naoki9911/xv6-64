@@ -1,8 +1,10 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 #include "structs.h"
+
 void debug_info_graphic(struct GraphicConfig *g_conf);
 void debug_info_cpuid();
+void debug_info_bootparam(struct BootParam *boot_param);
 
 enum {
     CPUID_FEAT_ECX_SSE3         = 1 << 0, 

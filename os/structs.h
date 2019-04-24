@@ -13,7 +13,7 @@ struct __attribute((packed)) GraphicConfig {
 
 struct __attribute__((packed)) BootParam {
   uint64_t kernel_entry;
-  uint64_t madt_addr;
+  uint64_t rsdp_addr;
   struct GraphicConfig graphic_config;
 //  struct gdt bootstrap_gdt[3];
 //  struct gdt_desc bootstrap_gdt_desc;

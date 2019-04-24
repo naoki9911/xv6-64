@@ -65,3 +65,13 @@ void debug_info_cpuid(){
         }
     }
 }
+
+void debug_info_bootparam(struct BootParam *boot_param){
+    console_puts_str("[Boot] Kernel Address:");
+    console_puts_hex(boot_param->kernel_addr);
+    console_puts_str("\n[Boot] Kernel Entry Address:");
+    console_puts_hex(boot_param->kernel_entry);
+    console_puts_str("\n[Boot] RSDP Address:");
+    console_puts_hex(boot_param->rsdp_addr);
+    console_puts_str("\n");
+}

@@ -8,7 +8,7 @@ __attribute__((packed)) struct cpuid_reg {
     uint32_t edx;
 };
 
-void cpuid_read(struct cpuid_reg *cpuid, uint32_t eax);
+__attribute__((sysv_abi)) void cpuid_read(struct cpuid_reg *cpuid, uint32_t eax);
 
 #endif
 

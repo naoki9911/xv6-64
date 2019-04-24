@@ -8,6 +8,7 @@ int entry(struct BootParam *boot_param)
 {
   graphic_init(&(boot_param->graphic_config));
   console_init();
+  debug_info_bootparam(boot_param);
   debug_info_graphic(&(boot_param->graphic_config));
   debug_info_cpuid();
   while(1){
